@@ -23,6 +23,7 @@ public class DebugClassLoaderHook extends ClassLoaderHook {
 	private File outFile;
 
 	public DebugClassLoaderHook() {
+		System.err.println("Classloader hook is active");
 		properties = new Properties();
 		InputStream in = null;
 		try {
@@ -30,6 +31,7 @@ public class DebugClassLoaderHook extends ClassLoaderHook {
 			properties.load(in);
 
 			if( properties.getProperty("logfile") != null ) {
+				System.err.println("The log file is: " + properties.getProperty("logfile"));
 				outFile = new File(properties.getProperty("logfile"));
 			}
 
