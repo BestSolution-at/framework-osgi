@@ -34,8 +34,8 @@ public class DebugClassLoaderHook extends ClassLoaderHook {
 			}
 
 			if( properties.getProperty("classpattern") != null ) {
-				println("Compiling: " + properties.getProperty("pre.find.classpattern"));
-				prefindClassPattern = Pattern.compile(properties.getProperty("pre.find.classpattern"));
+				println("Compiling: " + properties.getProperty("classpattern"));
+				prefindClassPattern = Pattern.compile(properties.getProperty("classpattern"));
 			}
 		} catch( Throwable e ) {
 			e.printStackTrace();
