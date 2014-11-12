@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Debug
+Bundle-SymbolicName: at.bestsolution.framework.osgi.equinox.debug
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.eclipse.osgi;bundle-version="3.10.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
