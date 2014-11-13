@@ -36,7 +36,7 @@ public class DebugClassLoaderHook extends ClassLoaderHook {
 			}
 
 			if( properties.getProperty("classpattern") != null ) {
-				println("Compiling: " + properties.getProperty("classpattern"));
+				println("Compiling search pattern: " + properties.getProperty("classpattern"));
 				prefindClassPattern = Pattern.compile(properties.getProperty("classpattern"));
 			}
 		} catch( Throwable e ) {
@@ -78,6 +78,17 @@ public class DebugClassLoaderHook extends ClassLoaderHook {
 		return new DelegatingModuleClassloader(parent, configuration, delegate, generation);
 	}
 
+	private static int nesting = 0;
+	private static final String oneInset = "  ";
+
+	private static String inset() {
+		StringBuilder b = new StringBuilder();
+		for( int i = 0; i < nesting; i++ ) {
+			b.append(oneInset);
+		}
+		return b.toString();
+	}
+
 	class DelegatingModuleClassloader extends ModuleClassLoader {
 		private final EquinoxConfiguration configuration;
 		private final BundleLoader delegate;
@@ -86,7 +97,7 @@ public class DebugClassLoaderHook extends ClassLoaderHook {
 		private ClasspathManager classpathManager;
 
 		public DelegatingModuleClassloader(ClassLoader parent, EquinoxConfiguration configuration,
-				BundleLoader delegate, Generation generation) {
+				BundleLoader delegate, final Generation generation) {
 			super(parent);
 			this.configuration = configuration;
 			this.delegate = delegate;
@@ -100,20 +111,26 @@ public class DebugClassLoaderHook extends ClassLoaderHook {
 						return super.findLocalClass(classname);
 					}
 
-					println("Loading local '"+classname+"'");
+					nesting++;
+					println(inset() + "> BEGIN: findLocalClass '"+classname+"' from bundle " + generation.getRevision().getBundle().getSymbolicName());
 					try {
 						Class<?> c = super.findLocalClass(classname);
 						if( c != null ) {
-							println("Loaded class by '"+c.getClassLoader()+"'");
+							println( inset() + oneInset +"Loaded class by '"+c.getClassLoader()+"'");
 						}
 						return c;
 					} catch( RuntimeException e ) {
 						throw e;
+					} finally {
+						println(inset() + "< END findLocalClass '"+classname+"'");
+						nesting--;
 					}
 
 				}
 			};
 		}
+
+
 
 		@Override
 		protected Generation getGeneration() {
